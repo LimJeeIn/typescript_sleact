@@ -2,15 +2,29 @@ import React, { useCallback, useState } from 'react';
 import { Form, Label, Input, LinkContainer, Button, Header } from './style';
 
 const SignUp = () => {
-  const [email] = useState('');
-  const [nickname] = useState('');
-  const [password] = useState('');
-  const [passwordCheck] = useState('');
-  const onChangeEmail = useCallback(() => {}, []);
-  const onChangeNickname = useCallback(() => {}, []);
-  const onChangePassword = useCallback(() => {}, []);
-  const onChangePasswordCheck = useCallback(() => {}, []);
-  const onSubmit = useCallback(() => {}, []);
+  const [email, setEmail] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordCheck, setPasswordCheck] = useState('');
+  const onChangeEmail = useCallback((e) => {
+    setEmail(e.target.value);
+  }, []);
+  const onChangeNickname = useCallback((e) => {
+    setNickname(e.target.value);
+  }, []);
+  const onChangePassword = useCallback((e) => {
+    setPassword(e.target.value);
+  }, []);
+  const onChangePasswordCheck = useCallback((e) => {
+    setPasswordCheck(e.target.value);
+  }, []);
+  const onSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      console.log(email, nickname, password, passwordCheck);
+    },
+    [email, nickname, password, passwordCheck],
+  );
 
   return (
     <div id="container">
@@ -37,7 +51,13 @@ const SignUp = () => {
         <Label id="password-check-label">
           <span>비밀번호 확인</span>
           <div>
-            <Input />
+            <Input
+              type="password"
+              id="passwordCheck"
+              name="passwordCheck"
+              value={passwordCheck}
+              onChange={onChangePasswordCheck}
+            />
           </div>
         </Label>
         <Button type="submit">회원가입</Button>
