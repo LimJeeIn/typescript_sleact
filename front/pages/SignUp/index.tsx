@@ -1,29 +1,45 @@
 import React, { useCallback, useState } from 'react';
-import { Form, Label, Input, LinkContainer, Button, Header } from './style';
+import { Form, Error, Label, Input, LinkContainer, Button, Header } from './style';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
   const [password, setPassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
+  const [mismatchError, setMismatchError] = useState(false);
+
   const onChangeEmail = useCallback((e) => {
     setEmail(e.target.value);
   }, []);
+
   const onChangeNickname = useCallback((e) => {
     setNickname(e.target.value);
   }, []);
-  const onChangePassword = useCallback((e) => {
-    setPassword(e.target.value);
-  }, []);
-  const onChangePasswordCheck = useCallback((e) => {
-    setPasswordCheck(e.target.value);
-  }, []);
+
+  const onChangePassword = useCallback(
+    (e) => {
+      setPassword(e.target.value);
+      setMismatchError(e.target.value !== passwordCheck);
+    },
+    [passwordCheck],
+  );
+
+  const onChangePasswordCheck = useCallback(
+    (e) => {
+      setPasswordCheck(e.target.value);
+      setMismatchError(e.target.value !== password);
+    },
+    [password],
+  );
+
   const onSubmit = useCallback(
     (e) => {
       e.preventDefault();
-      console.log(email, nickname, password, passwordCheck);
+      if (!mismatchError && nickname) {
+        console.log('서버로 회원가입하기');
+      }
     },
-    [email, nickname, password, passwordCheck],
+    [email, nickname, password, passwordCheck, mismatchError],
   );
 
   return (
@@ -59,6 +75,8 @@ const SignUp = () => {
               onChange={onChangePasswordCheck}
             />
           </div>
+          {mismatchError && <Error>비밀번호가 일치하지 않습니다.</Error>}
+          {!nickname && <Error>닉네임을 입력해주세요.</Error>}
         </Label>
         <Button type="submit">회원가입</Button>
       </Form>
