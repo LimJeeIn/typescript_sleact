@@ -1,10 +1,13 @@
 import useInput from '@hooks/useInput';
 import { Success, Form, Error, Label, Input, LinkContainer, Button, Header } from '@pages/SignUp/style';
+import fetcher from '@utils/fetcher';
 import axios from 'axios';
 import React, { useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import useSWR from 'swr';
 
 const LogIn = () => {
+  const { data, error, revalidate, mutate } = useSWR('/api/users', fetcher);
   const [loginError, setLoginError] = useState(false);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -13,14 +16,30 @@ const LogIn = () => {
       e.preventDefault();
       setLoginError(false);
       axios
-        .post('/api/users/login', { email, password })
-        .then(() => {})
+        .post(
+          '/api/users/login',
+          { email, password },
+          {
+            withCredentials: true,
+          },
+        )
+        .then((response) => {
+          mutate(response.data, false);
+        })
         .catch((error) => {
           setLoginError(error.response?.status === 401);
         });
     },
     [email, password],
   );
+
+  if (data === undefined) {
+    return <div>로딩중...</div>;
+  }
+
+  if (data) {
+    return <Redirect to="/workspace/channel" />;
+  }
 
   return (
     <div id="container">
